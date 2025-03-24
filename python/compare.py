@@ -93,6 +93,8 @@ def print_table(res, top):
 
     # Print table rows
     for i in range(top):
+        if i >= len(res):
+            break
         name, nrc = res[i]
         row = f"{VERTICAL} {CYAN}{nrc:.4f}{RESET} {VERTICAL} {name[:IDENTIFIER_WIDTH]:<{IDENTIFIER_WIDTH}} {VERTICAL}"
         print(row)
