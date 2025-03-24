@@ -14,7 +14,12 @@ def print_log(*args, **kwargs):
 
 def parse_database(text: str)-> list[tuple[str,str]]:
     sequences  = text.split("@")
-    return [(seq.split("\n")[0],seq.split("\n")[1]) for seq in sequences if seq]
+    ret = []
+    for seq in sequences[1:]:
+        name = seq.split("\n")[0]
+        sequence = "".join(seq.split("\n")[1:])
+        ret.append((name,sequence))
+    return ret
 
 class Model: 
     def __init__(self, text: str, ko: int, alpha: float):
@@ -55,7 +60,7 @@ class Model:
         content = self.estimate_bits(x)
         length_x = len(x)
         alphabet_x = set(x)
-        return content / (length_x - len(alphabet_x)) 
+        return content / (length_x - log(len(alphabet_x),2)) 
     
 def print_table(res, top):
     RESET = "\033[0m"
