@@ -1,6 +1,9 @@
 import argparse
 from math import log
 from datetime import datetime
+from tqdm import tqdm
+
+import concurrent.futures
 
 def open_file(file_path: str)-> str:
     with open(file_path,"r",encoding="utf-8") as f:
@@ -129,7 +132,25 @@ def main():
     if args.verbose:
         print_log(f"[INFO] Model: created with depth {args.context} and alpha {args.alpha}")
         
-    nrcs = [(seq[0],model.nrc(seq[1])) for seq in sequences]
+    def compute_nrc(seq):
+        return seq[0], model.nrc(seq[1]) 
+    
+    progress_bar = tqdm(total=len(sequences), desc="Processing NRCs", ncols=100)
+
+    nrcs = []
+    with concurrent.futures.ThreadPoolExecutor() as executor:
+        futures = {executor.submit(compute_nrc, seq): seq for seq in sequences}
+
+        # Iterate through futures as they complete, updating progress bar
+        for future in concurrent.futures.as_completed(futures):
+            nrcs.append(future.result())  # Collect result
+            progress_bar.update(1)  # Increment progress bar
+
+    progress_bar.close()
+    # delete progress bar by overwriting it by going up and printing empty line
+    print("\033[F\033[K", end="") 
+   
+        
     nrcs.sort(key=lambda x: x[1])
     if args.verbose:
         print_log(f"[INFO] Similarity: calculated for {len(nrcs)} sequences")
