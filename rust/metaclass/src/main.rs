@@ -87,7 +87,7 @@ impl Model {
         let length_x = x.len() as f64;
         let alphabet_x: HashSet<u8> = x.iter().copied().collect();
         let alphabet_size = alphabet_x.len() as f64;
-        let denominator = length_x - alphabet_size.log2();
+        let denominator = length_x * alphabet_size.log2();
         
         if denominator <= 0.0 {
             0.0
