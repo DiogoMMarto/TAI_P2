@@ -138,7 +138,7 @@ def main():
     progress_bar = tqdm(total=len(sequences), desc="Processing NRCs", ncols=100)
 
     nrcs = []
-    with concurrent.futures.ThreadPoolExecutor() as executor:
+    with concurrent.futures.ThreadPoolExecutor(max_workers=16) as executor:
         futures = {executor.submit(compute_nrc, seq): seq for seq in sequences}
 
         # Iterate through futures as they complete, updating progress bar
