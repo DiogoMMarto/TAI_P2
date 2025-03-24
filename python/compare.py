@@ -10,7 +10,6 @@ def open_file(file_path: str)-> str:
         return f.read()
 
 def print_log(*args, **kwargs):
-    # print time including milliseconds
     now = datetime.now()
     print(now.strftime("%H:%M:%S:%f"), end=" ")
     print(*args, **kwargs)
@@ -70,8 +69,6 @@ def print_table(res, top):
     BOLD = "\033[1m"
     CYAN = "\033[96m"
     HEADER_COLOR = "\033[93m"
-
-    # Unicode border characters
     TOP_LEFT = "╔"
     TOP_RIGHT = "╗"
     BOTTOM_LEFT = "╚"
@@ -83,22 +80,16 @@ def print_table(res, top):
     MID_HORIZONTAL = "╬"
     TOP_MIDDLE = "╦"
     BOTTOM_MIDDLE = "╩"
-
-    # Table width settings
     NRC_WIDTH = 6
     IDENTIFIER_WIDTH = 100
 
     # Print top border
     print(f"\n{TOP_LEFT}{HORIZONTAL * (NRC_WIDTH + 2)}{TOP_MIDDLE}{HORIZONTAL * (IDENTIFIER_WIDTH+2)}{TOP_RIGHT}")
-
-
     # Print header row
     header = f"{VERTICAL} {HEADER_COLOR}{BOLD}{'NRC':^{NRC_WIDTH}}{RESET} {VERTICAL} {HEADER_COLOR}{BOLD}{'Identifier':^{IDENTIFIER_WIDTH}}{RESET} {VERTICAL}"
     print(header)
-
     # Middle border
     print(f"{MID_LEFT}{HORIZONTAL * (NRC_WIDTH + 2)}{MID_HORIZONTAL}{HORIZONTAL * (IDENTIFIER_WIDTH+2)}{MID_RIGHT}")
-
     # Print table rows
     for i in range(top):
         if i >= len(res):
@@ -106,7 +97,6 @@ def print_table(res, top):
         name, nrc = res[i]
         row = f"{VERTICAL} {CYAN}{nrc:.4f}{RESET} {VERTICAL} {name[:IDENTIFIER_WIDTH]:<{IDENTIFIER_WIDTH}} {VERTICAL}"
         print(row)
-
     # Print bottom border
     print(f"{BOTTOM_LEFT}{HORIZONTAL * (NRC_WIDTH + 2)}{BOTTOM_MIDDLE}{HORIZONTAL * (IDENTIFIER_WIDTH+2)}{BOTTOM_RIGHT}")
 
@@ -141,13 +131,11 @@ def main():
     with concurrent.futures.ThreadPoolExecutor(max_workers=16) as executor:
         futures = {executor.submit(compute_nrc, seq): seq for seq in sequences}
 
-        # Iterate through futures as they complete, updating progress bar
         for future in concurrent.futures.as_completed(futures):
-            nrcs.append(future.result())  # Collect result
-            progress_bar.update(1)  # Increment progress bar
+            nrcs.append(future.result())  
+            progress_bar.update(1)  
 
     progress_bar.close()
-    # delete progress bar by overwriting it by going up and printing empty line
     print("\033[F\033[K", end="") 
    
         
