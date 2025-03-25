@@ -1,7 +1,10 @@
 package pt.ua.tai.meta;
 
 import java.util.*;
+import java.util.concurrent.*;
+import java.util.logging.Level;
 import java.util.logging.Logger;
+import java.util.stream.Collectors;
 
 public class Meta {
     private final Logger log = Logger.getLogger(getClass().getName());
@@ -15,7 +18,7 @@ public class Meta {
         this.k = k;
         init();
     }
-    
+
     public void init() {
         generateAlphabetSet();
         generateFrequencyTable(k);
@@ -29,12 +32,43 @@ public class Meta {
                 .toList();
     }
 
+    public Map<String, Double> batchRunMultiThreaded(Map<String, String> db, float alpha) {
+        int numThreads = Math.min(db.size() / 10, Runtime.getRuntime().availableProcessors() - 1); // Dynamic thread pool size
+        ExecutorService executor = Executors.newFixedThreadPool(numThreads);
+        CompletionService<Map.Entry<String, Double>> completionService = new ExecutorCompletionService<>(executor);
+        try {
+            for (Map.Entry<String, String> entry : db.entrySet()) {
+                completionService.submit(() -> {
+                    double result = estimateTotalBits(entry.getValue(), alpha);
+                    return Map.entry(entry.getKey(), result);
+                });
+            }
+
+            Map<String, Double> results = new HashMap<>(db.size(), 1);
+            for (int i = 0; i < db.size(); i++) {
+                try {
+                    Future<Map.Entry<String, Double>> future = completionService.take(); // Wait for next completed task
+                    Map.Entry<String, Double> resultEntry = future.get();
+                    results.put(resultEntry.getKey(), resultEntry.getValue());
+                } catch (InterruptedException e) {
+                    Thread.currentThread().interrupt();
+                    log.log(Level.SEVERE, "Thread was interrupted", e);
+                } catch (ExecutionException e) {
+                    log.log(Level.SEVERE, "Error processing task ", e);
+                }
+            }
+            return results;
+        } finally {
+            executor.shutdown(); // Ensure proper shutdown
+        }
+    }
+
     public Map<String, Double> batchRun(Map<String, String> db, float alpha) {
-        Map<String, Double> results = new HashMap<>();
-        db.entrySet().parallelStream().forEach(it ->
-                results.put(it.getKey(), estimateTotalBits(it.getValue(), alpha))
-        );
-        return results;
+        return db.entrySet().parallelStream()
+                .collect(Collectors.toMap(
+                        Map.Entry::getKey,
+                        it -> estimateTotalBits(it.getValue(), alpha)
+                ));
     }
 
     public double estimateTotalBits(String sequence, float alpha) {
