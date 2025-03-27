@@ -8,12 +8,13 @@ import java.util.LinkedHashMap;
 import java.util.Map;
 
 public class DatabaseReader {
-    public static void main(String[] args) throws IOException {
-        String s = readTxtFileToString("sequences/db.txt");
-        String[] sequences = parseSequencesFromText(s);
-        Map<String, String> dbMap = separateNameAndContent(sequences);
+    private DatabaseReader() {
+    }
 
-        dbMap.entrySet().stream().limit(2).forEach(e -> System.out.println(e.getKey() + " ---> " + e.getValue()));
+    public static Map<String, String> readFileAndCreateDbMap(String filePath) throws IOException {
+        String s = readTxtFileToString(filePath);
+        String[] sequences = parseSequencesFromText(s);
+        return separateNameAndContent(sequences);
     }
 
     private static Map<String, String> separateNameAndContent(String[] sequences) {
@@ -29,7 +30,7 @@ public class DatabaseReader {
         return Arrays.stream(s.split("@")).skip(1).toArray(String[]::new);
     }
 
-    public static String readTxtFileToString(String fileName) throws IOException {
-        return Files.readString(Paths.get(fileName));
+    public static String readTxtFileToString(String filePath) throws IOException {
+        return Files.readString(Paths.get(filePath));
     }
 }

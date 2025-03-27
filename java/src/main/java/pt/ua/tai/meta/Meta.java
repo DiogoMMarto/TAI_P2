@@ -59,7 +59,7 @@ public class Meta {
             }
             return results;
         } finally {
-            executor.shutdown(); // Ensure proper shutdown
+            executor.shutdown();
         }
     }
 
@@ -67,8 +67,19 @@ public class Meta {
         return db.entrySet().parallelStream()
                 .collect(Collectors.toMap(
                         Map.Entry::getKey,
-                        it -> estimateTotalBits(it.getValue(), alpha)
+                        it -> nrc(estimateTotalBits(it.getValue(), alpha), it.getValue())
                 ));
+    }
+
+    public double nrc(double bits, String sequence) {
+        final int len = alphabet.size();
+        final String uniqueStr = sequence.replaceAll("(.)(?=.*?\\1)", "");
+        final int unique = uniqueStr.length();
+        return bits / (len * log2(unique));
+    }
+
+    private double log2(double logNumber) {
+        return Math.log(logNumber) / Math.log(2);
     }
 
     public double estimateTotalBits(String sequence, float alpha) {
