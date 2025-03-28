@@ -2,7 +2,6 @@ package pt.ua.tai;
 
 import pt.ua.tai.meta.Meta;
 
-import java.util.List;
 import java.util.Map;
 
 import static pt.ua.tai.database.DatabaseReader.readFileAndCreateDbMap;
@@ -15,8 +14,8 @@ public class Main {
             Map<String, String> dbMap = readFileAndCreateDbMap("sequences/db.txt");
             String metaContent = readTxtFileToString("sequences/meta.txt");
             Meta meta = new Meta(metaContent, 2);
-            List<String> best = meta.getBestSequences(dbMap, 0.1f, 20);
-            best.forEach(x -> System.out.println(x));
+            Map<String, Double> best = meta.getBestSequences(dbMap, 0.1f, 20);
+            best.forEach((x, y) -> System.out.println(x + "\t" + y));
         } catch (Exception e) {
             throw new RuntimeException(e);
         }

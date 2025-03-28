@@ -24,12 +24,10 @@ public class Meta {
         generateFrequencyTable(k);
     }
 
-    public List<String> getBestSequences(Map<String, String> db, float alpha, int n) {
+    public Map<String, Double> getBestSequences(Map<String, String> db, float alpha, int n) {
         return batchRun(db, alpha).entrySet().stream()
                 .sorted(Map.Entry.comparingByValue(Comparator.reverseOrder()))
-                .limit(n)
-                .map(Map.Entry::getKey)
-                .toList();
+                .limit(n).collect(Collectors.toMap(Map.Entry::getKey, Map.Entry::getValue));
     }
 
     public Map<String, Double> batchRunMultiThreaded(Map<String, String> db, float alpha) {
@@ -72,10 +70,9 @@ public class Meta {
     }
 
     public double nrc(double bits, String sequence) {
-        final int len = alphabet.size();
-        final String uniqueStr = sequence.replaceAll("(.)(?=.*?\\1)", "");
-        final int unique = uniqueStr.length();
-        return bits / (len * log2(unique));
+        final int alphabetSize = alphabet.size();
+        final int sequenceLen = sequence.length();
+        return bits / (sequenceLen * log2(alphabetSize));
     }
 
     private double log2(double logNumber) {
