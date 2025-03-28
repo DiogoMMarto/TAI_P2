@@ -1,6 +1,9 @@
 package pt.ua.tai.meta;
 
-import java.util.*;
+import java.util.HashMap;
+import java.util.LinkedHashSet;
+import java.util.Map;
+import java.util.Set;
 import java.util.concurrent.*;
 import java.util.logging.Level;
 import java.util.logging.Logger;
@@ -14,7 +17,7 @@ public class Meta {
     private final String content;
 
     public Meta(String content, int k) {
-        this.content = content;
+        this.content = content.replace("\n", "");
         this.k = k;
         init();
     }
@@ -25,8 +28,8 @@ public class Meta {
     }
 
     public Map<String, Double> getBestSequences(Map<String, String> db, float alpha, int n) {
-        return batchRun(db, alpha).entrySet().stream()
-                .sorted(Map.Entry.comparingByValue(Comparator.reverseOrder()))
+        return batchRunMultiThreaded(db, alpha).entrySet().stream()
+                .sorted(Map.Entry.comparingByValue())
                 .limit(n).collect(Collectors.toMap(Map.Entry::getKey, Map.Entry::getValue));
     }
 
@@ -37,7 +40,7 @@ public class Meta {
         try {
             for (Map.Entry<String, String> entry : db.entrySet()) {
                 completionService.submit(() -> {
-                    double result = estimateTotalBits(entry.getValue(), alpha);
+                    double result = nrc(estimateTotalBits(entry.getValue(), alpha), entry.getValue());
                     return Map.entry(entry.getKey(), result);
                 });
             }
@@ -70,9 +73,10 @@ public class Meta {
     }
 
     public double nrc(double bits, String sequence) {
-        final int alphabetSize = alphabet.size();
         final int sequenceLen = sequence.length();
-        return bits / (sequenceLen * log2(alphabetSize));
+        final String uniqueStr = sequence.replaceAll("(.)(?=.*?\\1)", "");
+        final int unique = uniqueStr.length();
+        return bits / (sequenceLen * log2(unique));
     }
 
     private double log2(double logNumber) {

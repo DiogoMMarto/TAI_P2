@@ -11,11 +11,13 @@ public class Main {
 
     public static void main(String[] args) {
         try {
-            Map<String, String> dbMap = readFileAndCreateDbMap("../sequences/db.txt");
-            String metaContent = readTxtFileToString("../sequences/meta.txt");
-            Meta meta = new Meta(metaContent, 2);
-            Map<String, Double> best = meta.getBestSequences(dbMap, 0.1f, 20);
-            best.forEach((x, y) -> System.out.println(y + "\t" + x));
+            Map<String, String> dbMap = readFileAndCreateDbMap("sequences/db.txt");
+            String metaContent = readTxtFileToString("sequences/meta.txt");
+            Meta meta = new Meta(metaContent, 13);
+            Map<String, Double> best = meta.getBestSequences(dbMap, 1f, 20);
+
+            best.entrySet().stream().sorted(Map.Entry.comparingByValue())
+                    .forEach(e -> System.out.println(e.getValue() + "\t" + e.getKey()));
         } catch (Exception e) {
             throw new RuntimeException(e);
         }
