@@ -11,8 +11,8 @@ public class Main {
 
     public static void main(String[] args) {
         try {
-            Map<String, String> dbMap = readFileAndCreateDbMap("sequences/db.txt");
-            String metaContent = readTxtFileToString("sequences/meta.txt");
+            Map<String, String> dbMap = readFileAndCreateDbMap("../sequences/db.txt");
+            String metaContent = readTxtFileToString("../sequences/meta.txt");
             Meta meta = new Meta(metaContent, 2);
             Map<String, Double> best = meta.getBestSequences(dbMap, 0.1f, 20);
             best.forEach((x, y) -> System.out.println(x + "\t" + y));

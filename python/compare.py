@@ -62,6 +62,7 @@ class Model:
         content = self.estimate_bits(x)
         length_x = len(x)
         alphabet_x = set(x)
+        print(content, length_x, log(len(alphabet_x),2))
         return content / (length_x * log(len(alphabet_x),2)) 
     
 def print_table(res, top):

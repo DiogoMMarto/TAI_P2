@@ -123,7 +123,7 @@ fn print_log(message: &str) {
 
 fn print_table(res: &[(String, f64)], top: usize) {
     const NRC_WIDTH: usize = 6;
-    const IDENTIFIER_WIDTH: usize = 100;
+    const IDENTIFIER_WIDTH: usize = 50;
     let horizontal = "═";
     let vertical = "║";
     let top_left = "╔";
