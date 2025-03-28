@@ -96,7 +96,7 @@ public class Meta {
                 contextBuilder.deleteCharAt(0).append(sequence.charAt(i + k));
             }
         }
-        return totalSum / Math.log(2);
+        return -totalSum / Math.log(2);
     }
 
     private float getSymbolBits(CharCounts charCounts, char nextChar, float alpha, float alphaTimesAlphabet) {
