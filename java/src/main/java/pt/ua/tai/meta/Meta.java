@@ -17,7 +17,7 @@ public class Meta {
     private final String content;
 
     public Meta(String content, int k) {
-        this.content = content.replace("\n", "");
+        this.content = content.replaceAll("[^ATCG]", "");
         this.k = k;
         init();
     }

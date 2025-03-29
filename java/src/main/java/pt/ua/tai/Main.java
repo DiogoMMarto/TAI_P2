@@ -17,11 +17,11 @@ public class Main implements Callable<Integer> {
     private String fileNameDb;
     @Option(names = {"-v", "--verbose"}, description = "Verbose output", defaultValue = "false")
     private boolean verbose;
-    @Option(names = {"-a", "--alpha"}, description = "Smoothing parameter alpha")
+    @Option(names = {"-a", "--alpha"}, description = "Smoothing parameter alpha", defaultValue = "1")
     private Float alpha;
-    @Option(names = {"-k", "--contextWidth"}, description = "Context width")
+    @Option(names = {"-k", "--contextWidth"}, description = "Context width", defaultValue = "13")
     private Integer k;
-    @Option(names = {"-t", "--top"}, description = "Top t results")
+    @Option(names = {"-t", "--top"}, description = "Top t results", defaultValue = "20")
     private Integer t;
 
     public static void main(String[] args) {
@@ -44,6 +44,6 @@ public class Main implements Callable<Integer> {
         } catch (Exception e) {
             throw new RuntimeException(e);
         }
-        return 0;
+        return 1;
     }
 }
