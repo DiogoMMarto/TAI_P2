@@ -54,7 +54,6 @@ class Model:
             count = context_table.get(next_char,0)
             
             symbol_information = log(( count+self.alpha) / (total+const_term))
-            print(context, next_char, symbol_information, count, total)
             _sum += symbol_information
             
         return -_sum/log(2)
@@ -63,7 +62,6 @@ class Model:
         content = self.estimate_bits(x)
         length_x = len(x)
         alphabet_x = set(x)
-        print(content, length_x, len(alphabet_x))
         return content / (length_x * log(len(alphabet_x),2)) 
     
 def print_table(res, top):
@@ -119,6 +117,7 @@ def main():
         print_log(f"[INFO] Database: loaded {len(sequences)} sequences")
     
     sequence_text = open_file(args.sequence)
+    sequence_text = sequence_text.replace("\n","")
 
     model = Model(sequence_text, args.context, args.alpha)
     if args.verbose:
