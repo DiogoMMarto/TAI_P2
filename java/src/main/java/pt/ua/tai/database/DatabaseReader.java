@@ -21,7 +21,10 @@ public class DatabaseReader {
         Map<String, String> dbMap = new LinkedHashMap<>();
         Arrays.stream(sequences).forEach(it -> {
             final String[] parts = it.split("\n");
-            dbMap.put(parts[0], parts[1]);
+            StringBuilder content = new StringBuilder();
+            Arrays.stream(parts).skip(1).forEach(content::append);
+            String filteredContent = content.toString().replaceAll("[^ATCG]", "");
+            dbMap.put(parts[0], filteredContent);
         });
         return dbMap;
     }

@@ -9,7 +9,7 @@ public final class CharCounts {
     private int totalCount = 0;
 
     int get(char c) {
-        return counts.get(c);
+        return counts.getOrDefault(c, 0);
     }
 
     int increment(char c) {
