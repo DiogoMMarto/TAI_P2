@@ -5,15 +5,15 @@ import sys
 import statistics
 
 impl = sys.argv[1] if len(sys.argv) > 1 else "java"
-jar_path = "../java/target/tai-1.0-SNAPSHOT.jar"
-python_script = "../python/compare.py"
-rust_binary = "./tai"
-file_meta = "../sequences/meta.txt"
-file_db = "../sequences/db.txt"
-output_file = "tests_results.json"
+jar_path = os.path.abspath(os.path.join(os.path.dirname(__file__),"../java/target/tai-1.0-SNAPSHOT.jar"))
+python_script = os.path.abspath(os.path.join(os.path.dirname(__file__),"../python/compare.py"))
+rust_binary = os.path.abspath(os.path.join(os.path.dirname(__file__),"./tai"))
+file_meta = os.path.abspath(os.path.join(os.path.dirname(__file__),"../sequences/meta.txt"))
+file_db = os.path.abspath(os.path.join(os.path.dirname(__file__),"../sequences/db.txt"))
+output_file = os.path.abspath(os.path.join(os.path.dirname(__file__),"tests_results.json"))
 
 alpha_values = [1, 0.25, 0.06, 0.015, 0.04, 0.001, 0.00025, 0.00006, 0.00001, 0.0000025, 0.0000006, 0.0000001]
-k_values = [6, 7, 8, 9, 10, 11, 12, 13, 14, 15]
+k_values = [2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19, 20]
 t_value = 20  
 
 if os.path.exists(output_file):

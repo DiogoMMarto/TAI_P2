@@ -3,8 +3,9 @@ import numpy as np
 import pandas as pd
 import seaborn as sns
 import matplotlib.pyplot as plt
+import os
 
-with open("tests_results.json", "r") as file:
+with open(os.path.abspath(os.path.join(os.path.dirname(__file__),"tests_results.json")), "r") as file:
     data = json.load(file)
 
 tests = data["tests"]
@@ -35,7 +36,7 @@ sns.heatmap(df_mean, annot=True, cmap="coolwarm", fmt=".3f")
 plt.title("Heatmap Best K and Alpha scores - Mean Score")
 plt.xlabel("Alpha")
 plt.ylabel("Context Width")
-plt.savefig("heatmap_mean.png")  
+plt.savefig(os.path.abspath(os.path.join(os.path.dirname(__file__),"heatmap_mean.png"))) 
 plt.close() 
 
 plt.figure(figsize=(8, 6))
@@ -43,5 +44,5 @@ sns.heatmap(df_std, annot=True, cmap="coolwarm", fmt=".3f")
 plt.title("Heatmap Best K and Alpha scores - Std Dev Score")
 plt.xlabel("Alpha")
 plt.ylabel("Context Width")
-plt.savefig("heatmap_std.png") 
+plt.savefig(os.path.abspath(os.path.join(os.path.dirname(__file__),"heatmap_std.png")))
 plt.close()

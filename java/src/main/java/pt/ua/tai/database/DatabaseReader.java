@@ -1,10 +1,13 @@
 package pt.ua.tai.database;
 
+import java.io.BufferedWriter;
+import java.io.FileWriter;
 import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Paths;
 import java.util.Arrays;
 import java.util.LinkedHashMap;
+import java.util.List;
 import java.util.Map;
 
 public class DatabaseReader {
@@ -35,5 +38,15 @@ public class DatabaseReader {
 
     public static String readTxtFileToString(String filePath) throws IOException {
         return Files.readString(Paths.get(filePath));
+    }
+    public static void writeListToFile(String filePath, List<Double> list){
+        try (BufferedWriter writer = new BufferedWriter(new FileWriter(filePath))) {
+            for (Double number : list) {
+                writer.write(number.toString()); // Convert double to String
+                writer.newLine(); // Move to the next line
+            }
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
     }
 }

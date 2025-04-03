@@ -1,9 +1,6 @@
 package pt.ua.tai.meta;
 
-import java.util.HashMap;
-import java.util.LinkedHashSet;
-import java.util.Map;
-import java.util.Set;
+import java.util.*;
 import java.util.concurrent.*;
 import java.util.logging.Level;
 import java.util.logging.Logger;
@@ -34,7 +31,7 @@ public class Meta {
     }
 
     public Map<String, Double> batchRunMultiThreaded(Map<String, String> db, float alpha) {
-        int numThreads = Math.min(db.size() / 10, Runtime.getRuntime().availableProcessors() - 1); // Dynamic thread pool size
+        int numThreads = Math.max(1,Math.min(db.size() / 10, Runtime.getRuntime().availableProcessors() - 1)); // Dynamic thread pool size
         ExecutorService executor = Executors.newFixedThreadPool(numThreads);
         CompletionService<Map.Entry<String, Double>> completionService = new ExecutorCompletionService<>(executor);
         try {
@@ -76,6 +73,14 @@ public class Meta {
         final int sequenceLen = sequence.length();
         final String uniqueStr = sequence.replaceAll("(.)(?=.*?\\1)", "");
         final int unique = uniqueStr.length();
+        return bits / (sequenceLen * log2(unique));
+    }
+
+    public double nrc2(double bits, int sequenceLen) {
+        if(bits<0){
+            System.err.println("negative bits:" + bits);
+        }
+        final int unique = 4;
         return bits / (sequenceLen * log2(unique));
     }
 
@@ -138,4 +143,47 @@ public class Meta {
         }
     }
 
+
+    public List<Double> getNRCProgression(String sequence, float alpha) {
+        List<Double> progression = new ArrayList<>();
+        int aux = k;
+        List<Double> bitsList = estimateBitsPerCharacter(sequence, alpha);
+
+        for (double bits : bitsList) {
+            if (aux > sequence.length()) {
+                System.out.println("Breaking loop, aux exceeds sequence length.");
+                break;
+            }
+
+            // Process the character directly instead of using substring
+            progression.add(nrc2(bits, aux));  // Use charAt to access the character
+            aux++;
+        }
+
+        return progression;
+    }
+
+
+
+    public List<Double> estimateBitsPerCharacter(String sequence, float alpha) {
+        final float alphaTimesAlphabet = alpha * alphabet.size();
+        double totalSum = 0.0F;
+        List<Double> bitsList = new ArrayList<>();
+
+        StringBuilder contextBuilder = new StringBuilder(sequence.substring(0, k));
+        final int sequenceLength = sequence.length();
+
+        for (int i = 0; i + k < sequenceLength; i++) {
+            final String context = contextBuilder.toString();
+            final char nextChar = sequence.charAt(i + k);
+            CharCounts charCounts = frequencyTable.getOrDefault(context, new CharCounts());
+            float symbolBits = getSymbolBits(charCounts, nextChar, alpha, alphaTimesAlphabet);
+            totalSum += symbolBits;
+            if (i + k + 1 < sequenceLength) {
+                contextBuilder.deleteCharAt(0).append(sequence.charAt(i + k));
+                bitsList.add(-totalSum / Math.log(2));
+            }
+        }
+        return bitsList;
+    }
 }
