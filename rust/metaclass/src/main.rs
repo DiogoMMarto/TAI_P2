@@ -23,6 +23,8 @@ struct Args {
     top: usize,
     #[arg(short, long)]
     verbose: bool,
+    #[arg(short, long)]
+    csv: bool,
 }
 
 struct Model {
@@ -107,7 +109,7 @@ fn parse_database(text: &[u8]) -> Vec<(String, Vec<u8>)> {
         let name_line = lines.next().unwrap_or_default();
         let name = String::from_utf8_lossy(name_line).to_string();
         let sequence_bytes = lines.next().unwrap_or_default().iter()
-            .filter(|&&b| b != b'\n' && b != b'\r')
+            .filter(|&&b| b == b'A' || b == b'T' || b == b'C' || b == b'G')
             .copied()
             .collect();
         ret.push((name, sequence_bytes));
@@ -121,7 +123,13 @@ fn print_log(message: &str) {
     println!("{} {}", timestamp.cyan(), message);
 }
 
-fn print_table(res: &[(String, f64)], top: usize) {
+fn print_table(res: &[(String, f64)], top: usize, csv: bool) {
+    if csv {
+        for (name, nrc) in res.iter().take(top) {
+            println!("{}\t{}", nrc, name);
+        }
+        return;
+    }
     const NRC_WIDTH: usize = 6;
     const IDENTIFIER_WIDTH: usize = 50;
     let horizontal = "═";
@@ -198,6 +206,11 @@ fn main() -> anyhow::Result<()> {
     }
 
     let sequence_bytes = fs::read(&args.sequence)?;
+    let sequence_bytes: Vec<u8> = sequence_bytes
+        .iter()
+        .filter(|&&b| b == b'A' || b == b'T' || b == b'C' || b == b'G')
+        .copied()
+        .collect();
     let model = Model::new(&sequence_bytes, args.context, args.alpha);
 
     if args.verbose {
@@ -230,7 +243,7 @@ fn main() -> anyhow::Result<()> {
         ));
     }
 
-    print_table(&nrcs, args.top);
+    print_table(&nrcs, args.top, args.csv);
 
     Ok(())
 }
