@@ -3,6 +3,8 @@ import sys
 import json
 import subprocess
 import statistics
+import time
+import psutil
 
 impl = sys.argv[1] if len(sys.argv) > 1 else "java"
 
@@ -51,7 +53,7 @@ def run_test(alpha, k):
         ]
     elif impl == "rust":
         cmd = [
-            "cargo", "run", "--release", 
+            "cargo", "run", "--release",
             "--manifest-path", os.path.abspath(os.path.join(os.path.dirname(__file__), "../rust/metaclass/Cargo.toml")),
             "--",
             "-d", file_db,
@@ -66,19 +68,36 @@ def run_test(alpha, k):
         return None
 
     print(f"Running: {' '.join(cmd)}")
-    result = subprocess.run(cmd, stdout=subprocess.PIPE, stderr=subprocess.PIPE, text=True)
 
-    print(f"STDOUT:\n{result.stdout}")
-    print(f"STDERR:\n{result.stderr}")
-    print(f"Return Code: {result.returncode}")
+    start_time = time.perf_counter()
+    process = subprocess.Popen(cmd, stdout=subprocess.PIPE, stderr=subprocess.PIPE, text=True)
+    proc = psutil.Process(process.pid)
 
-    if result.returncode != 0 and result.stderr.strip():
-        print(f"Error running test with alpha={alpha}, k={k}: {result.stderr}")
+    peak_memory = 0
+    try:
+        while process.poll() is None:
+            mem = proc.memory_info().rss / (1024 * 1024) 
+            peak_memory = max(peak_memory, mem)
+            time.sleep(0.05)
+        stdout, stderr = process.communicate()
+    except Exception as e:
+        process.kill()
+        raise e
+    end_time = time.perf_counter()
+
+    elapsed_time = end_time - start_time
+
+    print(f"STDOUT:\n{stdout}")
+    print(f"STDERR:\n{stderr}")
+    print(f"Return Code: {process.returncode}")
+
+    if process.returncode != 0 and stderr.strip():
+        print(f"Error running test with alpha={alpha}, k={k}: {stderr}")
         return None
 
     parsed_results = []
     scores = []
-    for line in result.stdout.strip().split("\n"):
+    for line in stdout.strip().split("\n"):
         parts = line.split("\t")
         if len(parts) == 2:
             score, name = parts
@@ -96,14 +115,14 @@ def run_test(alpha, k):
         mean_score = 0.0
         std_dev_score = 0.0
 
-    return parsed_results, mean_score, std_dev_score
+    return parsed_results, mean_score, std_dev_score, elapsed_time, peak_memory
 
 for alpha in alpha_values:
     for k in k_values:
         test_exists = any(test["alpha"] == alpha and test["contextWidth"] == k for test in results_data[impl])
         
         if not test_exists:
-            results, mean_score, std_dev_score = run_test(alpha, k) or (None, None, None)
+            results, mean_score, std_dev_score, elapsed_time, peak_memory = run_test(alpha, k) or (None, None, None, None, None)
             if results:
                 results_data[impl].append({
                     "alpha": alpha,
@@ -111,6 +130,8 @@ for alpha in alpha_values:
                     "top": t_value,
                     "meanScore": mean_score,
                     "stdDevScore": std_dev_score,
+                    "time": elapsed_time,
+                    "memoryMB": peak_memory,
                     "results": results
                 })
 
