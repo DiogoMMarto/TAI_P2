@@ -13,7 +13,7 @@ jar_path = os.path.abspath(os.path.join(os.path.dirname(__file__), "../java/targ
 python_script = os.path.abspath(os.path.join(os.path.dirname(__file__), "../python/compare.py"))
 file_meta = os.path.abspath(os.path.join(os.path.dirname(__file__), "../sequences/meta.txt"))
 file_db = os.path.abspath(os.path.join(os.path.dirname(__file__), "../sequences/db.txt"))
-output_file = os.path.abspath(os.path.join(os.path.dirname(__file__), "tests_results_c.json"))
+output_file = os.path.abspath(os.path.join(os.path.dirname(__file__), "tests_results.json"))
 
 alpha_values = [1, 0.25, 0.06, 0.015, 0.04, 0.001, 0.00025, 0.00006, 0.00001, 0.0000025, 0.0000006, 0.0000001]
 k_values = [2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19, 20]
