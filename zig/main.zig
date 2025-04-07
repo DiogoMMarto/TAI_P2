@@ -338,6 +338,6 @@ pub fn main() !void {
 
     const top = @min(args.top, entries.len);
     for (entries[0..top]) |entry| {
-        std.debug.print("{d:.6}\t{s}\n", .{entry.nrc, entry.name});
+        std.io.getStdOut().writer().print("{d}\t{s}\n", .{entry.nrc, entry.name}) catch {};
     }
 }
