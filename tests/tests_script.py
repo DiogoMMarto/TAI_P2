@@ -10,6 +10,7 @@ impl = sys.argv[1] if len(sys.argv) > 1 else "java"
 
 c_path = os.path.abspath(os.path.join(os.path.dirname(__file__), "../c/meta"))
 cpp_path = os.path.abspath(os.path.join(os.path.dirname(__file__), "../cpp/meta"))
+zig_path = os.path.abspath(os.path.join(os.path.dirname(__file__), "../zig/meta"))
 rust_path = os.path.abspath(os.path.join(os.path.dirname(__file__), "../rust/metaclass/target/release/sequence_similarity"))
 jar_path = os.path.abspath(os.path.join(os.path.dirname(__file__), "../java/target/tai-1.0-SNAPSHOT.jar"))
 python_script = os.path.abspath(os.path.join(os.path.dirname(__file__), "../python/compare.py"))
@@ -80,6 +81,14 @@ def run_test(alpha, k):
             "-k", str(k),
             "-a", str(alpha),
             "-c"
+        ]
+    elif impl == "zig":
+        cmd = [
+            zig_path,
+            "-d", file_db,
+            "-s", file_meta,
+            "-k", str(k),
+            "-a", str(alpha)
         ]
     else:
         print(f"Unknown implementation: {impl}")
