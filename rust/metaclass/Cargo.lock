@@ -487,6 +487,19 @@ source = "registry+https://github.com/rust-lang/crates.io-index"
 checksum = "78ca9ab1a0babb1e7d5695e3530886289c18cf2f87ec19a575a0abdce112e3a3"
 
 [[package]]
+name = "meta"
+version = "0.1.0"
+dependencies = [
+ "anyhow",
+ "chrono",
+ "clap 4.5.32",
+ "colored",
+ "criterion",
+ "indicatif",
+ "rayon",
+]
+
+[[package]]
 name = "num-traits"
 version = "0.2.19"
 source = "registry+https://github.com/rust-lang/crates.io-index"
@@ -639,19 +652,6 @@ source = "registry+https://github.com/rust-lang/crates.io-index"
 checksum = "93fc1dc3aaa9bfed95e02e6eadabb4baf7e3078b0bd1b4d7b6b0b68378900502"
 dependencies = [
  "winapi-util",
-]
-
-[[package]]
-name = "sequence_similarity"
-version = "0.1.0"
-dependencies = [
- "anyhow",
- "chrono",
- "clap 4.5.32",
- "colored",
- "criterion",
- "indicatif",
- "rayon",
 ]
 
 [[package]]
