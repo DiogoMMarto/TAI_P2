@@ -1,0 +1,64 @@
+import matplotlib.pyplot as plt
+import os
+import sys
+import numpy as np
+
+def read_values_from_file(filename):
+    """Reads numerical values from a file, one per line."""
+    try:
+        with open(filename, 'r') as f:
+            values = [float(line.strip()) for line in f if line.strip()]
+        return values
+    except Exception as e:
+        print(f"Error reading file: {e}")
+        sys.exit(1)
+
+def dynamic_window_size(length):
+    """Returns a smooth window size such that:
+    - ~700 -> ~30
+    - ~120000 -> ~20000
+    """
+    return max(1, int(0.0267 * length ** 1.1))
+
+def moving_average(values, window_size):
+    """Applies a simple moving average to smooth the values."""
+    if len(values) < window_size:
+        return values  # Not enough data to smooth
+    return np.convolve(values, np.ones(window_size) / window_size, mode='valid')
+
+def plot_bits_estimation_progression(values, output_file, sequence_name):
+    """Plots the smoothed Bits Estimation progression and saves the image."""
+    window_size = dynamic_window_size(len(values))
+    smoothed_values = moving_average(values, window_size=window_size)
+    
+    plt.figure(figsize=(10, 5))
+    plt.plot(range(len(smoothed_values)), smoothed_values, marker='o', linestyle='-', color='b', markersize=3,
+             label=f'Smoothed Bits Estimation (window={window_size})')
+    plt.xlabel("Position in Sequence")
+    plt.ylabel("Bits Value")
+    plt.title(f"Smoothed Bits Estimation Progression - {sequence_name}")
+    plt.legend()
+    plt.grid(True, linestyle='--', alpha=0.6)
+    plt.savefig(output_file)
+    plt.close()
+
+def process_folder(folder_path):
+    """Processes only .txt files directly in the folder and generates a plot for each."""
+    output_dir = os.path.join(folder_path, "plots")
+    os.makedirs(output_dir, exist_ok=True)
+
+    for filename in os.listdir(folder_path):
+        file_path = os.path.join(folder_path, filename)
+        if os.path.isfile(file_path) and filename.endswith(".txt"):
+            sequence_name = os.path.splitext(filename)[0]  # removes ".txt"
+            output_file = os.path.join(output_dir, f"{sequence_name}.png")
+            values = read_values_from_file(file_path)
+            plot_bits_estimation_progression(values, output_file, sequence_name)
+            print(f"Saved plot: {output_file}")
+
+def main():
+    folder_path = os.path.abspath(os.path.join(os.path.dirname(__file__), "../progression"))
+    process_folder(folder_path)
+
+if __name__ == "__main__":
+    main()

@@ -45,7 +45,7 @@ public class Main implements Callable<Integer> {
             Map<String, Double> best = meta.getBestSequences(dbMap, alpha, t);
             if(progressionFolder!=null){
                 for (Map.Entry<String, Double> entry : best.entrySet()) {
-                    List<Double> progression=meta.getNRCProgression(dbMap.get(entry.getKey()),alpha);
+                    List<Double> progression=meta.estimateBitsPerCharacter(dbMap.get(entry.getKey()),alpha);
                     // Replace invalid characters with underscores
                     String fileName = entry.getKey()
                             .replaceAll("[\\\\/:*?\"<>|]", "_")  // Replace invalid characters

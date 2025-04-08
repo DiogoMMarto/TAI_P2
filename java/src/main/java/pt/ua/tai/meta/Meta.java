@@ -181,7 +181,7 @@ public class Meta {
             totalSum += symbolBits;
             if (i + k + 1 < sequenceLength) {
                 contextBuilder.deleteCharAt(0).append(sequence.charAt(i + k));
-                bitsList.add(-totalSum / Math.log(2));
+                bitsList.add(-symbolBits / Math.log(2));
             }
         }
         return bitsList;
