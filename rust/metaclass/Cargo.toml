@@ -1,5 +1,5 @@
 [package]
-name = "sequence_similarity"
+name = "meta"
 version = "0.1.0"
 edition = "2021"
 description = "A Rust implementation for calculating sequence similarity using Normalized Relative Compression (NRC)."
@@ -13,7 +13,6 @@ colored = "2.0" # For colored terminal output
 indicatif = "0.17" # For progress bars
 rayon = "1.7" # For parallel processing
 chrono = "0.4" # For timestamping logs
-dashmap = "5.4" # For concurrent hash map access (if needed)
 anyhow = "1.0" # For error handling
 
 [dev-dependencies]

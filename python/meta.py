@@ -20,6 +20,7 @@ def parse_database(text: str)-> list[tuple[str,str]]:
     for seq in sequences[1:]:
         name = seq.split("\n")[0]
         sequence = "".join(seq.split("\n")[1:])
+        sequence = "".join([c for c in sequence if c in "ACGT"])
         ret.append((name,sequence))
     return ret
 
@@ -64,7 +65,13 @@ class Model:
         alphabet_x = set(x)
         return content / (length_x * log(len(alphabet_x),2)) 
     
-def print_table(res, top):
+def print_table(res, top,csv = False):
+    if csv:
+        for i in range(top):
+            name, nrc = res[i]
+            print(f"{nrc}\t{name}")
+        return
+
     RESET = "\033[0m"
     BOLD = "\033[1m"
     CYAN = "\033[96m"
@@ -108,6 +115,7 @@ def main():
     parser.add_argument("-a","--alpha", type=float, default=1.0 , help="Smoothing factor")
     parser.add_argument("-t","--top", type=int, default=20 , help="Top N similar sequences")
     parser.add_argument("-v","--verbose", action="store_true", help="Print verbose")
+    parser.add_argument("-c","--csv", action="store_true", help="Output in CSV format")
     
     args = parser.parse_args()
     
@@ -117,7 +125,7 @@ def main():
         print_log(f"[INFO] Database: loaded {len(sequences)} sequences")
     
     sequence_text = open_file(args.sequence)
-    sequence_text = sequence_text.replace("\n","")
+    sequence_text = "".join([c for c in sequence_text if c in "ACGT"])
 
     model = Model(sequence_text, args.context, args.alpha)
     if args.verbose:
@@ -144,7 +152,7 @@ def main():
     if args.verbose:
         print_log(f"[INFO] Similarity: calculated for {len(nrcs)} sequences")
         
-    print_table(nrcs, args.top)
+    print_table(nrcs, args.top, args.csv)
     
     return 
 
