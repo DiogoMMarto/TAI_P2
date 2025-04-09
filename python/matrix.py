@@ -4,9 +4,6 @@ from meta import parse_database , open_file, Model , print_log
 import numpy as np
 import matplotlib.pyplot as plt
 from sklearn.manifold import TSNE
-from scipy.cluster.hierarchy import linkage, fcluster
-from scipy.spatial.distance import squareform
-import umap 
 
 def build_matrix(sequences: list[tuple[str,str]], k: int, alpha: float)-> np.ndarray:
     matrix = np.zeros((len(sequences),len(sequences)),dtype=np.float32)
