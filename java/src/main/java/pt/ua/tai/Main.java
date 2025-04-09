@@ -63,10 +63,11 @@ public class Main implements Callable<Integer> {
     private void writeProgressToFile(String fileName, List<Double> progression) {
         createFolderIfNotExists();
         // Replace invalid characters with underscores
-        fileName = fileName.replaceAll("[\\\\/:*?\"<>|]", "_");
+        fileName = fileName.replaceAll("[\\\\/:*?\"<>| ]", "_");
         if (fileName.length() > 50) {
             fileName = fileName.substring(0, 50);
         }
+        fileName=fileName.trim();
         String filePath = Paths.get(progressionFolder, fileName + ".txt").toString();
         System.out.println("Writing to file: '" + filePath + "'");
         writeListToFile(filePath, progression);

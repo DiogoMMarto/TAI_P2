@@ -20,8 +20,8 @@ def run_test(file_meta, output_file):
         "java", "-jar", jar_path,
         "-fm", file_meta,
         "-fd", file_db,
-        "-a", str(0.001),
-        "-k", str(17),
+        "-a", str(0.015),
+        "-k", str(15),
         "-t", str(1),
         "-p", output_file
     ]
