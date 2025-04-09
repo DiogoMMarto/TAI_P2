@@ -39,6 +39,10 @@ def plot_bits_estimation_progression(values, output_file, sequence_name):
     plt.title(f"Smoothed Bits Estimation Progression - {sequence_name}")
     plt.legend()
     plt.grid(True, linestyle='--', alpha=0.6)
+    
+    # Fix the y-axis between 0 and 3
+    plt.ylim(0, 3)
+
     plt.savefig(output_file)
     plt.close()
 

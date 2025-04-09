@@ -48,7 +48,7 @@ plt.savefig(os.path.abspath(os.path.join(os.path.dirname(__file__), "heatmap_mea
 plt.close()
 
 plt.figure(figsize=(10, 6))
-sns.heatmap(df_std, annot=True, cmap="coolwarm", fmt=".3f")
+sns.heatmap(df_std, annot=True, cmap="coolwarm_r", fmt=".3f")
 plt.title("Heatmap Java Results - Std Dev Score")
 plt.xlabel("Alpha")
 plt.ylabel("Context Width")
