@@ -46,11 +46,11 @@ for i, impl in enumerate(file_paths.keys()):
     plt.bar(offset, time_data[impl], width=bar_width, label=impl.capitalize(), yerr=time_std[impl], capsize=5)
 
     for j, (mean, std) in enumerate(zip(time_data[impl], time_std[impl])):
-        plt.text(offset[j], mean + std + 0.15, f"{mean:.2f}±{std:.2f}", ha='center', va='bottom', fontsize=7)
+        plt.text(offset[j], mean + std + 0.15, f"{mean:.2f}±{std:.2f}",ha='center', va='bottom', fontsize=12, rotation=90)
 
 plt.xlabel("Context Width (k)")
 plt.ylabel("Time (seconds)")
-plt.title("Execution Time by Implementation")
+plt.title("Execution Time")
 plt.xticks(x + bar_width * (len(file_paths) - 1) / 2, [str(k) for k in target_ks])
 plt.legend()
 plt.tight_layout()
@@ -64,11 +64,12 @@ for i, impl in enumerate(file_paths.keys()):
     plt.bar(offset, memory_data[impl], width=bar_width, label=impl.capitalize(), yerr=memory_std[impl], capsize=5)
 
     for j, (mean, std) in enumerate(zip(memory_data[impl], memory_std[impl])):
-        plt.text(offset[j], mean + std + 4, f"{mean:.0f}±{std:.0f}", ha='center', va='bottom', fontsize=7)
+        plt.text(offset[j], mean + std + 14, f"{mean:.0f}±{std:.0f}", ha='center', va='bottom', fontsize=12, rotation=90)
+
 
 plt.xlabel("Context Width (k)")
 plt.ylabel("Memory (MB)")
-plt.title("Memory Usage by Implementation")
+plt.title("Memory Usage")
 plt.xticks(x + bar_width * (len(file_paths) - 1) / 2, [str(k) for k in target_ks])
 plt.legend()
 plt.tight_layout()
